@@ -4,6 +4,8 @@ import com.oluyinka.droneapi.dto.CreateMedicationDto;
 import com.oluyinka.droneapi.dto.UpdateMedicationDto;
 import com.oluyinka.droneapi.entities.Medication;
 import com.oluyinka.droneapi.services.MedicationService;
+import com.oluyinka.droneapi.utils.ControllerHelper;
+
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +26,16 @@ public class MedicationController {
     }
 
     @PostMapping
-    public ResponseEntity<Medication> createMedication(@Valid @RequestBody CreateMedicationDto createMedicationDto) {
+    public ResponseEntity<?> createMedication(@Valid @RequestBody CreateMedicationDto createMedicationDto) {
+        ResponseEntity<?> nameValidationResult = ControllerHelper.validateMedicationName(createMedicationDto.getName());
+        if (nameValidationResult != null) {
+            return nameValidationResult;
+        }
+
+        ResponseEntity<?> codeValidationResult = ControllerHelper.validateMedicationCode(createMedicationDto.getCode());
+        if (codeValidationResult != null) {
+            return codeValidationResult;
+        }
         try {
             Medication createdMedication = medicationService.createMedication(createMedicationDto);
             return new ResponseEntity<>(createdMedication, HttpStatus.CREATED);

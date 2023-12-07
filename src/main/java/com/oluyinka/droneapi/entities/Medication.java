@@ -2,7 +2,7 @@ package com.oluyinka.droneapi.entities;
 
 import lombok.Data;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -23,7 +23,7 @@ public class Medication {
     @Column(nullable = false)
     private double weight;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String code;
 
     @Column(nullable = false)
