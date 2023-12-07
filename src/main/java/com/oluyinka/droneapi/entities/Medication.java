@@ -17,17 +17,16 @@ public class Medication {
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
 
-    @NotNull
+    @Column(nullable = false)
     private String name;
 
-    @NotNull
+    @Column(nullable = false)
     private double weight;
 
-    @NotNull
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String code;
 
-    @NotNull
+    @Column(nullable = false)
     private String image;
 }
 

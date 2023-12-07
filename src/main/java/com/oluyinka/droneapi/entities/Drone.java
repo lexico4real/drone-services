@@ -25,9 +25,9 @@ public class Drone {
     @Enumerated(EnumType.STRING)
     private DroneState state;
 
-    @NotNull
+    @Column(nullable = false)
     private int batteryCapacity;
 
-    @NotNull
+    @Column(nullable = false)
     private Double weightLimit;
 }
