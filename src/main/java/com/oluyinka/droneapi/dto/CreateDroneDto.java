@@ -2,24 +2,12 @@ package com.oluyinka.droneapi.dto;
 
 import com.oluyinka.droneapi.model.DroneModel;
 
-import lombok.Data;
-
-import javax.validation.constraints.*;
-
-@Data
 public class CreateDroneDto {
 
-    @NotNull(message = "Model is required")
     private DroneModel model;
 
-    @NotNull(message = "Battery capacity is required")
-    @Min(value = 0, message = "Battery capacity cannot be less than 0")
-    @Max(value = 100, message = "Battery capacity cannot be more than 100")
     private Integer batteryCapacity;
 
-    @NotNull(message = "Weight limit is required")
-    @Min(value = 0, message = "Weight limit cannot be less than 0")
-    @Max(value = 500, message = "Weight limit cannot be more than 500")
     private Double weightLimit;
 
     public CreateDroneDto() {
