@@ -38,11 +38,10 @@ public class DroneService {
     @Scheduled(cron = "*/10 * * * * *")
     public void getDroneBatteryStatus() {
         LOGGER.info("Scheduled method is being executed.");
-
         List<Drone> drones = getAllDrones();
         for (Drone drone : drones) {
             int batteryLevel = drone.getBatteryCapacity();
-            System.out.println("Serial Number: " + drone.getSerialNumber() + ", Battery Level: " + batteryLevel + "%");
+            LOGGER.info("Serial Number: " + drone.getSerialNumber() + ", Battery Level: " + batteryLevel + "%");
         }
     }
 

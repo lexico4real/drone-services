@@ -2,7 +2,6 @@ package com.oluyinka.droneapi.entities;
 
 import lombok.Data;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Pattern;
 
 import org.hibernate.annotations.GenericGenerator;
 

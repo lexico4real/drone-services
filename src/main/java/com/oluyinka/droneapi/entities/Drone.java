@@ -8,8 +8,6 @@ import com.oluyinka.droneapi.utils.enums.DroneState;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 
 @Data
 @Entity
