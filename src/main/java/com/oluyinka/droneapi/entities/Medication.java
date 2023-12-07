@@ -3,6 +3,8 @@ package com.oluyinka.droneapi.entities;
 import lombok.Data;
 import jakarta.persistence.*;
 
+import java.util.List;
+
 import org.hibernate.annotations.GenericGenerator;
 
 
@@ -27,5 +29,8 @@ public class Medication {
 
     @Column(nullable = false)
     private String image;
+
+    @ManyToMany(mappedBy = "medications", fetch = FetchType.LAZY)
+    private List<Dispatch> dispatches;
 }
 

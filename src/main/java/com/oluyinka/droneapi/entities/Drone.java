@@ -29,4 +29,7 @@ public class Drone {
 
     @Column(nullable = false)
     private Double weightLimit;
+
+    // @OneToOne(mappedBy = "drone")
+    // private Dispatch dispatch;
 }
