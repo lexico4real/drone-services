@@ -3,6 +3,7 @@ package com.oluyinka.droneapi.dto;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.oluyinka.droneapi.entities.Drone;
@@ -10,12 +11,16 @@ import com.oluyinka.droneapi.entities.Drone;
 @Data
 public class CreateDispatchDto {
 
+    private String id;
+
     private String description;
 
     private Drone drone;
 
-    // private List<CreateMedicationDto> medications;
+    private String droneId;
 
-    private List<String> medicationIds;
+    private List<CreateMedicationDto> medications = new ArrayList<>();
+
+    private List<String> medicationIds = new ArrayList<>();
 }
 

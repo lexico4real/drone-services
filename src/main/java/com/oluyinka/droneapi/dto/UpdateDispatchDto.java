@@ -4,6 +4,7 @@ import com.oluyinka.droneapi.entities.Drone;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -13,8 +14,8 @@ public class UpdateDispatchDto {
 
     private Drone drone;
 
-    // private List<CreateMedicationDto> medications;
+    private List<CreateMedicationDto> medications = new ArrayList<>();
 
-    private List<String> medicationIds;
+    private List<String> medicationIds = new ArrayList<>();
 }
 

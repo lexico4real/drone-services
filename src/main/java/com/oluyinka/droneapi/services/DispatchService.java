@@ -20,6 +20,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DispatchService {
@@ -104,9 +105,13 @@ public class DispatchService {
     @Transactional
     public Dispatch createDispatch(CreateDispatchDto createDispatchDto) {
         String description = createDispatchDto.getDescription();
-        Drone drone = getDroneById(createDispatchDto.getDrone().getSerialNumber());
+        Drone drone = getDroneById(createDispatchDto.getDroneId());
         List<Medication> medications = getMedicationByIds(createDispatchDto.getMedicationIds());
 
+        System.out.println("MEDICATIONS" + medications);
+        System.out.println("DRONE" + drone);
+
+        
         Dispatch dispatch = new Dispatch();
         dispatch.setDescription(description);
         dispatch.setDrone(drone);
@@ -116,7 +121,7 @@ public class DispatchService {
                 .mapToDouble(medication -> medication.getWeight())
                 .sum();
 
-        Drone droneObject = getDroneById(dispatch.getDrone().getSerialNumber());
+        Drone droneObject = getDroneById(createDispatchDto.getDroneId());
 
         if (droneObject.getWeightLimit() < weightSum) {
             throw new EntityNotFoundException("Drone weight not enough");
@@ -140,6 +145,7 @@ public class DispatchService {
 
         droneObject.setState(DroneState.LOADING);
         updateDroneState(serialNumber, updateDroneDto);
+        dispatch.setMedications(medications);
         droneRepository.save(droneObject);
 
         try {
@@ -166,7 +172,7 @@ public class DispatchService {
         Dispatch found = getDispatchById(id);
         found.setDescription(updateDispatchDto.getDescription());
         found.setDrone(updateDispatchDto.getDrone());
-        found.setMedications(getMedicationByIds(updateDispatchDto.getMedicationIds()));
+        // found.setMedications(getMedicationByIds(updateDispatchDto.getMedicationIds()));
 
         try {
             return dispatchRepository.save(found);
@@ -178,6 +184,7 @@ public class DispatchService {
     @Transactional
     public void deleteDispatchById(String id) throws NotFoundException {
         Dispatch found = getDispatchById(id);
+        // dispatchHistoryRepository.save(found);
         dispatchRepository.deleteById(found.getId());
     }
 }
