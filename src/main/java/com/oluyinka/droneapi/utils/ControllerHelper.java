@@ -34,4 +34,26 @@ public class ControllerHelper {
         return ResponseEntity.status(status)
                 .body(new ErrorResponse(status.value(), errorMessage));
     }
+
+    public static ResponseEntity<?> validateMedicationName(String name) {
+        String namePattern = "^[a-zA-Z0-9-_]+$";
+
+        if (!name.matches(namePattern)) {
+            String errorMessage = "Name can only contain letters, numbers, '-', and '_'";
+            return errorResponse(HttpStatus.BAD_REQUEST, errorMessage);
+        }
+
+        return null;
+    }
+
+    public static ResponseEntity<?> validateMedicationCode(String code) {
+        String codePattern = "^[A-Z0-9_]+$";
+
+        if (!code.matches(codePattern)) {
+            String errorMessage = "Code can only contain uppercase letters, numbers, and underscores";
+            return errorResponse(HttpStatus.BAD_REQUEST, errorMessage);
+        }
+
+        return null;
+    }
 }
