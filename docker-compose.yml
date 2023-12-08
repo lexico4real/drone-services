@@ -1,0 +1,24 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: someFunnyPassword
+      MYSQL_DATABASE: drone_api
+      MYSQL_USER: musalaAdmin
+      MYSQL_PASSWORD: someFunnyPassword
+
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring-app-container
+    depends_on:
+      - mysql
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/drone_api
+      SPRING_DATASOURCE_USERNAME: musalaAdmin
+      SPRING_DATASOURCE_PASSWORD: someFunnyPassword
