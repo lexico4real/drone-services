@@ -6,8 +6,6 @@ import jakarta.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,20 +24,14 @@ public class Dispatch {
     private String description;
 
     // @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
     @JoinColumn(name = "drone_serial_number", referencedColumnName = "serialNumber")
     private Drone drone;
 
     @ManyToMany()
-    @JoinTable(
-            name = "dispatch_medications",
-            joinColumns = @JoinColumn(name = "dispatch_id"),
-            inverseJoinColumns = @JoinColumn(name = "medication_id")
-    )
+    @JoinTable(name = "dispatch_medications", joinColumns = @JoinColumn(name = "dispatch_id"), inverseJoinColumns = @JoinColumn(name = "medication_id"))
     private List<Medication> medications = new ArrayList<>();
 
     @Column(nullable = false)
     private boolean isCompleted;
 }
-
-

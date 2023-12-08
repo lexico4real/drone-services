@@ -26,4 +26,6 @@ public interface DispatchRepository extends JpaRepository<Dispatch, String> {
             "JOIN FETCH d.drone dr " +
             "JOIN FETCH d.medications m")
     List<Dispatch> findAllWithDrone();
+
+    boolean existsByDroneSerialNumber(String droneSerialNumber);
 }

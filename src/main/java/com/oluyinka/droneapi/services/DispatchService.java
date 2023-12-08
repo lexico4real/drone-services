@@ -20,12 +20,12 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class DispatchService {
 
-     private static final Logger LOGGER = LoggerFactory.getLogger(DroneService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DroneService.class);
 
     @Autowired
     private final DispatchRepository dispatchRepository;
@@ -33,6 +33,9 @@ public class DispatchService {
     private final MedicationRepository medicationRepository;
     @Autowired
     private final DroneRepository droneRepository;
+
+    @Autowired
+    private DispatchHistoryRepository dispatchHistoryRepository;
 
     public DispatchService(DispatchRepository dispatchRepository,
             MedicationRepository medicationRepository,
@@ -60,14 +63,23 @@ public class DispatchService {
 
     @Scheduled(cron = "*/5 * * * * *")
     public void resetDroneState() {
-        List<Dispatch> drones = dispatchRepository.findAll();
-        drones.forEach(drone -> {
-            if (drone.getDrone().getState() == DroneState.DELIVERING) {
-                drone.getDrone().setState(DroneState.IDLE);
+        List<Dispatch> dispatches = dispatchRepository.findAll();
+        dispatches.forEach(dispatch -> {
+            if (dispatch.getDrone().getState() == DroneState.DELIVERED) {
+                dispatch.getDrone().setState(DroneState.IDLE);
+                droneRepository.save(dispatch.getDrone());
+
                 try {
-                    deleteDispatchById(drone.getId());
+                    DispatchHistory history = new DispatchHistory();
+                    history.setDescription(dispatch.getDescription());
+                    history.setDrone(dispatch.getDrone());
+                    history.setMedications(dispatch.getMedications());
+                    history.setCompleted(dispatch.isCompleted());
+                    dispatchHistoryRepository.save(history);
+
+                    deleteDispatchById(dispatch.getId());
                 } catch (EntityNotFoundException | NotFoundException e) {
-                    e.printStackTrace();
+                    return;
                 }
             }
         });
@@ -86,19 +98,35 @@ public class DispatchService {
     @Transactional
     public Drone updateDroneState(String id, UpdateDroneDto updateDroneDto) {
         Drone found = getDroneById(id);
-        found.setBatteryCapacity(updateDroneDto.getBatteryCapacity());
-        found.setWeightLimit(updateDroneDto.getWeightLimit());
-        found.setState(updateDroneDto.getState());
+        if (updateDroneDto.getBatteryCapacity() != null) {
+            found.setBatteryCapacity(updateDroneDto.getBatteryCapacity());
+        }
+        if (updateDroneDto.getWeightLimit() != null) {
+            found.setWeightLimit(updateDroneDto.getWeightLimit());
+        }
+        if (updateDroneDto.getState() != null) {
+            found.setState(updateDroneDto.getState());
+        }
         return droneRepository.save(found);
     }
 
     @Transactional
     public Dispatch updateDroneStateWithDispatchId(String id, UpdateDroneDto updateDroneDto) throws NotFoundException {
         Dispatch found = getDispatchById(id);
-        found.getDrone().setBatteryCapacity(updateDroneDto.getBatteryCapacity());
-        found.getDrone().setWeightLimit(updateDroneDto.getWeightLimit());
-        found.getDrone().setState(updateDroneDto.getState());
-        droneRepository.save(found.getDrone());
+        Drone drone = found.getDrone();
+
+        if (updateDroneDto.getBatteryCapacity() != null) {
+            drone.setBatteryCapacity(updateDroneDto.getBatteryCapacity());
+        }
+
+        if (updateDroneDto.getWeightLimit() != null) {
+            drone.setWeightLimit(updateDroneDto.getWeightLimit());
+        }
+
+        if (updateDroneDto.getState() != null) {
+            drone.setState(updateDroneDto.getState());
+            found.setCompleted(true);
+        }
         return found;
     }
 
@@ -108,10 +136,11 @@ public class DispatchService {
         Drone drone = getDroneById(createDispatchDto.getDroneId());
         List<Medication> medications = getMedicationByIds(createDispatchDto.getMedicationIds());
 
-        System.out.println("MEDICATIONS" + medications);
-        System.out.println("DRONE" + drone);
+        if (dispatchRepository.existsByDroneSerialNumber(createDispatchDto.getDroneId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Drone with ID " + createDispatchDto.getDroneId() + " is already assigned to a dispatch.");
+        }
 
-        
         Dispatch dispatch = new Dispatch();
         dispatch.setDescription(description);
         dispatch.setDrone(drone);
@@ -135,18 +164,18 @@ public class DispatchService {
         DroneModel model = droneObject.getModel();
         Integer batteryCapacity = droneObject.getBatteryCapacity();
         Double weightLimit = droneObject.getWeightLimit();
-        DroneState state = droneObject.getState();
+        // DroneState state = droneObject.getState();
 
         UpdateDroneDto updateDroneDto = new UpdateDroneDto();
         updateDroneDto.setModel(model);
         updateDroneDto.setBatteryCapacity(batteryCapacity);
         updateDroneDto.setWeightLimit(weightLimit);
-        updateDroneDto.setState(state);
+        updateDroneDto.setState(DroneState.LOADING);
 
         droneObject.setState(DroneState.LOADING);
+        droneRepository.save(droneObject);
         updateDroneState(serialNumber, updateDroneDto);
         dispatch.setMedications(medications);
-        droneRepository.save(droneObject);
 
         try {
             return dispatchRepository.save(dispatch);
@@ -172,7 +201,7 @@ public class DispatchService {
         Dispatch found = getDispatchById(id);
         found.setDescription(updateDispatchDto.getDescription());
         found.setDrone(updateDispatchDto.getDrone());
-        // found.setMedications(getMedicationByIds(updateDispatchDto.getMedicationIds()));
+        found.setMedications(getMedicationByIds(updateDispatchDto.getMedicationIds()));
 
         try {
             return dispatchRepository.save(found);
@@ -181,10 +210,15 @@ public class DispatchService {
         }
     }
 
+    // private DispatchHistory getDispatchHistoryById(String id) {
+    //     return dispatchHistoryRepository.findById(id).orElse(null);
+    // }
+
     @Transactional
     public void deleteDispatchById(String id) throws NotFoundException {
         Dispatch found = getDispatchById(id);
-        // dispatchHistoryRepository.save(found);
+        // DispatchHistory history = new DispatchHistory();
+        // dispatchHistoryRepository.save(history);
         dispatchRepository.deleteById(found.getId());
     }
 }
