@@ -1,0 +1,272 @@
+{
+	"info": {
+		"_postman_id": "22f182e8-ef61-4c14-b652-0652d89c6dd5",
+		"name": "MUSALA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "14126723",
+		"_collection_link": "https://galactic-satellite-568367.postman.co/workspace/My-Workspace~aeadd82b-2ce8-481b-8bd9-871861318e26/collection/14126723-22f182e8-ef61-4c14-b652-0652d89c6dd5?action=share&source=collection_link&creator=14126723"
+	},
+	"item": [
+		{
+			"name": "DRONE",
+			"item": [
+				{
+					"name": "GET ALL DRONES",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8081/api/drones"
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE DRONE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"model\": \"Heavyweight\",\r\n    \"batteryCapacity\": 100,\r\n    \"weightLimit\": 400.9\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8081/api/drones"
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE DRONE",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"weightLimit\": 400,\r\n    \"state\": \"LOADING\",\r\n    \"model\": \"Heavyweight\",\r\n    \"batteryCapacity\": 90\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8081/api/drones/3ac1cb58-a5ed-4d51-a949-a275cc83f559"
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE DRONE BY ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8081/api/drones/a1984eaf-d4c8-480b-8ccc-d286fada1e34"
+					},
+					"response": []
+				},
+				{
+					"name": "GET DRONE BY ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8081/api/drones/a1984eaf-d4c8-480b-8ccc-d286fada1e34"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "MEDICATIONS",
+			"item": [
+				{
+					"name": "GET ALL MEDICATIONS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8081/api/medications"
+					},
+					"response": []
+				},
+				{
+					"name": "GET MEDICATION BY ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8081/api/medications/1e6a70f8-c4ea-46b3-b67c-2882e88fd2fa"
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE MEDICATION BY ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8081/api/medications/011ea5ad-8fec-48ca-99b6-f7c0c2234188"
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE MEDICATION BY ID",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Medication_2\",\r\n    \"weight\": 100,\r\n    \"code\": \"BVMF\",\r\n    \"image\": \"https://ichef.bbci.co.uk/news/1024/branded_news/B71C/production/_123167864_gettyimages-1022216070.jpg\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8081/api/medications/25635490-0b58-45a1-aa5c-01de3dd91c6c"
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE MEDICATION",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Medication_1\",\r\n    \"weight\": 200.8,\r\n    \"code\": \"UHMF_\",\r\n    \"image\": \"https://ichef.bbci.co.uk/news/1024/branded_news/B71C/production/_123167864_gettyimages-1022216070.jpg\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8081/api/medications"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DISPATCHES",
+			"item": [
+				{
+					"name": "GET ALL DISPATCHES",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": "http://localhost:8081/api/dispatch"
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE A DISPATCH",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"droneId\": \"01ba5399-9dd3-4697-8cef-1e5d62fb07fa\",\n    \"medicationIds\": [\"76df703e-201e-4a46-bb21-1be750764d1c\", \"f5918afc-9d2a-4d4d-a489-853555bf2bd2\"],\n    \"description\": \"Some description\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8081/api/dispatch"
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE A DISPATCH",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"drone\": \"022112b0-8eee-4b92-9ebc-888f96942fe6\",\n    \"medications\": [\"a2b70f29-acab-4e93-b71e-cdc76b018e38\", \"ffb9f267-0c3f-46c1-ae47-770eb2e727d0\"],\n    \"description\": \"Some description some description\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8081/api/dispatch/961d2fc9-1305-4bf4-9c34-87d8e92310ed"
+					},
+					"response": []
+				},
+				{
+					"name": "GET DISPATCH BY MEDICATION ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8081/api/dispatch/withmedication/1e6a70f8-c4ea-46b3-b67c-2882e88fd2fa"
+					},
+					"response": []
+				},
+				{
+					"name": "GET DISPATCH BY DRONE ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8081/api/dispatch/withdrone/04a83b7f-5eb8-4426-b520-f4f42c6a2f9f"
+					},
+					"response": []
+				},
+				{
+					"name": "GET DISPATCH BY ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8081/api/dispatch/9f50c107-5084-4451-8f44-f9bd7a97e675"
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE A DISPATCH",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8081/api/dispatch/659b3895-0f88-4c71-b009-85d8de185462"
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE DRONE STATE",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"state\": \"DELIVERED\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8081/api/dispatch/dronestate/9213fbe9-c2a3-4934-8a3c-301dbb1d0ce1"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DISPATCH HISTORY",
+			"item": [
+				{
+					"name": "GET DISPATCH HISTORY",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8081/api/dispatch-history"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

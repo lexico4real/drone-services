@@ -8,6 +8,9 @@ services:
       MYSQL_DATABASE: drone_api
       MYSQL_USER: musalaAdmin
       MYSQL_PASSWORD: someFunnyPassword
+    ports:
+      - "3306:3306"  # Map MySQL port to the host if needed
+    command: --default-authentication-plugin=mysql_native_password  # Optional, depending on MySQL version
 
   spring-app:
     build:
