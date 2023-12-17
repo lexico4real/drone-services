@@ -44,4 +44,10 @@ public class Drone {
     public Drone(String serialNumber) {
         this.serialNumber = serialNumber;
     }
+    
+    public Drone(DroneModel model, int batteryCapacity, double weightLimit) {
+        this.model = model;
+        this.batteryCapacity = batteryCapacity;
+        this.weightLimit = weightLimit;
+    }
 }

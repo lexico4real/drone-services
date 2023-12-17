@@ -15,6 +15,7 @@ import com.oluyinka.droneapi.repositories.DispatchHistoryRepository;
 import com.oluyinka.droneapi.repositories.DroneRepository;
 import com.oluyinka.droneapi.repositories.MedicationRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,6 +29,19 @@ public class DispatchHistoryService {
 
     @Autowired
     private DroneRepository droneRepository;
+
+    public DispatchHistoryService(DispatchHistoryRepository dispatchHistoryRepository,
+            MedicationRepository medicationRepository,
+            DroneRepository droneRepository) {
+        this.dispatchHistoryRepository = dispatchHistoryRepository;
+        this.medicationRepository = medicationRepository;
+        this.droneRepository = droneRepository;
+    }
+
+    @Transactional
+    public List<DispatchHistory> getAllDispatchHistories() {
+        return dispatchHistoryRepository.findAll();
+    }
 
     @Transactional
     public Drone updateDroneState(String id, UpdateDroneDto updateDroneDto) {
@@ -86,12 +100,24 @@ public class DispatchHistoryService {
     }
 
     private Drone getDroneById(String id) {
+        if (id == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Drone ID cannot be null");
+        }
+
         return droneRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Drone not found with id: " + id));
     }
 
     private List<Medication> getMedicationByIds(List<String> ids) {
         List<Medication> medications = medicationRepository.findAllById(ids);
+        if (medications.size() != ids.size()) {
+            List<String> foundIds = medications.stream().map(Medication::getId).toList();
+            List<String> notFoundIds = new ArrayList<>(ids);
+            notFoundIds.removeAll(foundIds);
+
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "Medication not found with ids: " + notFoundIds);
+        }
         if (medications.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Medication not found with id: " + ids);
         }

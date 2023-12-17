@@ -16,7 +16,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("api/dispatch")
+@RequestMapping("/api/dispatch")
 public class DispatchController {
 
     @Autowired

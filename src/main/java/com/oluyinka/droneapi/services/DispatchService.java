@@ -28,8 +28,10 @@ public class DispatchService {
 
     @Autowired
     private final DispatchRepository dispatchRepository;
+    
     @Autowired
     private final MedicationRepository medicationRepository;
+
     @Autowired
     private final DroneRepository droneRepository;
 
@@ -56,6 +58,7 @@ public class DispatchService {
 
     @Transactional
     public Drone getDroneById(String id) {
+        LOGGER.info("Getting drone by ID: {}", id);
         return droneRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Drone with id " + id + " not found"));
     }
@@ -131,6 +134,7 @@ public class DispatchService {
 
     @Transactional
     public Dispatch createDispatch(CreateDispatchDto createDispatchDto) {
+        LOGGER.info("Creating dispatch: {}", createDispatchDto);
         String description = createDispatchDto.getDescription();
         Drone drone = getDroneById(createDispatchDto.getDroneId());
         List<Medication> medications = getMedicationByIds(createDispatchDto.getMedicationIds());
@@ -149,21 +153,22 @@ public class DispatchService {
                 .mapToDouble(medication -> medication.getWeight())
                 .sum();
 
-        Drone droneObject = getDroneById(createDispatchDto.getDroneId());
+        if (drone.getWeightLimit() == null) {
+            throw new EntityNotFoundException("Drone weight limit is not set");
+        }
 
-        if (droneObject.getWeightLimit() < weightSum) {
+        if (drone.getWeightLimit() < weightSum) {
             throw new EntityNotFoundException("Drone weight not enough");
         }
 
-        if (droneObject.getBatteryCapacity() <= 25) {
+        if (drone.getBatteryCapacity() <= 25) {
             throw new EntityNotFoundException("Drone battery capacity not enough");
         }
 
-        String serialNumber = droneObject.getSerialNumber();
-        DroneModel model = droneObject.getModel();
-        Integer batteryCapacity = droneObject.getBatteryCapacity();
-        Double weightLimit = droneObject.getWeightLimit();
-        // DroneState state = droneObject.getState();
+        String serialNumber = drone.getSerialNumber();
+        DroneModel model = drone.getModel();
+        Integer batteryCapacity = drone.getBatteryCapacity();
+        Double weightLimit = drone.getWeightLimit();
 
         UpdateDroneDto updateDroneDto = new UpdateDroneDto();
         updateDroneDto.setModel(model);
@@ -171,15 +176,15 @@ public class DispatchService {
         updateDroneDto.setWeightLimit(weightLimit);
         updateDroneDto.setState(DroneState.LOADING);
 
-        droneObject.setState(DroneState.LOADING);
-        droneRepository.save(droneObject);
+        drone.setState(DroneState.LOADING);
+        droneRepository.save(drone);
         updateDroneState(serialNumber, updateDroneDto);
         dispatch.setMedications(medications);
 
         try {
             return dispatchRepository.save(dispatch);
         } catch (Exception e) {
-            throw new EntityNotFoundException("Drone already assigned to medication");
+            throw new EntityNotFoundException("Drone already assigned to medications");
         }
     }
 

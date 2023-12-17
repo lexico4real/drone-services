@@ -1,7 +1,6 @@
 package com.oluyinka.droneapi.services;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -18,13 +17,14 @@ import java.util.List;
 @Service
 public class DroneService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DroneService.class);
+    private final Logger logger;
 
     @Autowired
     private final DroneRepository droneRepository;
 
-    public DroneService(DroneRepository droneRepository) {
+    public DroneService(DroneRepository droneRepository, Logger logger) {
         this.droneRepository = droneRepository;
+        this.logger = logger;
     }
 
     public Drone createDrone(CreateDroneDto createDroneDto) {
@@ -38,9 +38,13 @@ public class DroneService {
     @Scheduled(cron = "*/10 * * * * *")
     public void getDroneBatteryStatus() {
         List<Drone> drones = getAllDrones();
+        processDroneBatteryStatus(drones);
+    }
+
+    public void processDroneBatteryStatus(List<Drone> drones) {
         for (Drone drone : drones) {
             int batteryLevel = drone.getBatteryCapacity();
-            LOGGER.info("Serial Number: " + drone.getSerialNumber() + ", Battery Level: " + batteryLevel + "%");
+            logger.info("Serial Number: " + drone.getSerialNumber() + ", Battery Level: " + batteryLevel + "%");
         }
     }
 

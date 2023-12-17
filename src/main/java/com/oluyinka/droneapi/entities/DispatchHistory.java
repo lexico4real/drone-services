@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -24,13 +25,13 @@ public class DispatchHistory {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "drone_id")
     private Drone drone;
 
     @ManyToMany
     @JoinTable(name = "dispatch_history_medications", joinColumns = @JoinColumn(name = "dispatch_history_id"), inverseJoinColumns = @JoinColumn(name = "medication_id"))
-    private List<Medication> medications;
+    private List<Medication> medications = new ArrayList<>();
 
     @Column(name = "is_completed", nullable = false)
     private boolean isCompleted = false;

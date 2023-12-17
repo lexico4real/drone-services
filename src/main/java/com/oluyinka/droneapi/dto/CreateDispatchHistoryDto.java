@@ -10,6 +10,8 @@ import lombok.Data;
 @Data
 public class CreateDispatchHistoryDto {
 
+    private String id;
+
     private String description;
 
     private Drone drone;
@@ -17,5 +19,9 @@ public class CreateDispatchHistoryDto {
     private List<CreateMedicationDto> medications = new ArrayList<>();
 
     private List<String> medicationIds = new ArrayList<>();
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }
 

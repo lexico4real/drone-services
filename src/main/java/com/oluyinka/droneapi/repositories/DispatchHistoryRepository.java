@@ -14,5 +14,7 @@ public interface DispatchHistoryRepository extends JpaRepository<DispatchHistory
 
     List<DispatchHistory> findByDroneSerialNumber(String droneId);
 
+    List<DispatchHistory> findAll();
+
 }
 
